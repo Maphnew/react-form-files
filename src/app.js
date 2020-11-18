@@ -4,13 +4,15 @@ import axios from 'axios';
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';
 import Avatar from './components/upload';
+import Download from './components/download';
 
 class App extends React.Component { 
 
 	state = { 
 
         // Initially, no file is selected 
-        selectedFile: null
+        selectedFile: null,
+        downloadedImage: ''
     }; 
         
     // On file select (from the pop up) 
@@ -68,9 +70,26 @@ class App extends React.Component {
 		); 
 	} 
 	}; 
-	
+    
+    onDownload = (str) => {
+        console.log(str)
+        this.setState({
+            downloadedImage: str
+        })
+    }
+
+    componentDidMount() {
+        axios.post("http://localhost:3000/download", {
+          "name": "images.png"
+        }).then((image) => {
+            const svg = image.data
+
+            this.onDownload(svg)
+        })
+    }
+
 	render() { 
-	
+        console.log(this.state)
         return ( 
             <div> 
                 <h1> File Upload Test </h1> 
@@ -87,6 +106,7 @@ class App extends React.Component {
                     // onFileUpload={this.onFileUpload}
                     // onFileChange={this.onFileChange}
                 />
+                <Download downloadedImage={this.state.downloadedImage}/>
             </div> 
         ); 
 	} 
